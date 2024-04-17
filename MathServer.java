@@ -94,7 +94,7 @@ public class MathServer {
                     "Server files are located in the ./files directory\n" +
                     "Commands:\n" +
                     "\"List\" - list files stored on server.\n" +
-                    "\"Upload <file_name>\" - upload file. \n" +
+                    "\"Upload <file_name>\" - upload file. Note that you must enter the entire file path if the file is not in the same directory as the client and server files.\n" +
                     "\"Download <file_name>\" - download file. \n" +
                     "\"Exit\" - quit connection.\n" +
                     "Commands are case-sensitive.");

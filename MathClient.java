@@ -71,21 +71,32 @@ public class MathClient {
                 if(userInput.startsWith("Download")){
                     out.writeUTF(userInput);
                     String fileContent = in.readUTF();
-                    String filename = parseFileName(userInput);
-                    writeToFile(fileContent, filename);
-                    System.out.println("Download complete");
+                    if(fileContent.equals("File not found")){
+                        System.out.println("File not found");
+                    }
+                    else {
+                        String filename = parseFileName(userInput);
+                        writeToFile(fileContent, filename);
+                        System.out.println("Download complete");
+                    }
                 }
                 if(userInput.equals("List")){
                     out.writeUTF(userInput);
                     System.out.println(in.readUTF());
                 }
                 if(userInput.startsWith("Upload")){
-                    int fileLength = parseFileName(userInput).length();
-                    String fileName = parseFileName(userInput);
-                    //format of send: Upload FileNameLength FileName FileContent
-                    String send = "Upload " + fileLength + " " + fileName + " " + getFileContent(fileName);
-                    out.writeUTF(send);
-                    System.out.println(in.readUTF());
+                    File file = new File(parseFileName(userInput));
+                    if(file.exists()) {
+                        int fileLength = parseFileName(userInput).length();
+                        String fileName = parseFileName(userInput);
+                        //format of send: Upload FileNameLength FileName FileContent
+                        String send = "Upload " + fileLength + " " + fileName + " " + getFileContent(fileName);
+                        out.writeUTF(send);
+                        System.out.println(in.readUTF());
+                    }
+                    else{
+                        System.out.println("File not found");
+                    }
                 }
             }
         } catch (UnknownHostException e) {
