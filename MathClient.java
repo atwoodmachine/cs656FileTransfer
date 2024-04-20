@@ -77,6 +77,7 @@ public class MathClient {
                     else {
                         String filename = parseFileName(userInput);
                         writeToFile(fileContent, filename);
+                        System.out.println("File received.\n--File contents--\n" + fileContent + "\n--End file contents--");
                         System.out.println("Download complete");
                     }
                 }
@@ -92,7 +93,14 @@ public class MathClient {
                         //format of send: Upload FileNameLength FileName FileContent
                         String send = "Upload " + fileLength + " " + fileName + " " + getFileContent(fileName);
                         out.writeUTF(send);
-                        System.out.println(in.readUTF());
+                        String serverResponse = in.readUTF();
+                        if(serverResponse.equals("File already exists")) {
+                            System.out.println("File already exists");
+                        }
+                        else{
+                            System.out.println("File name to upload: " + fileName + "\n--File content--\n" + getFileContent(fileName) + "\n--End File Content--");
+                            System.out.println(serverResponse);
+                        }
                     }
                     else{
                         System.out.println("File not found");

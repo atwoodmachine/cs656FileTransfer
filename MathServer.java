@@ -72,6 +72,7 @@ public class MathServer {
             upload = new FileWriter(location);
             upload.write(fileContent);
             upload.close();
+            System.out.println("Uploaded file: " + fileName + "\n--File Contents--\n" + fileContent + "\n--End File Contents--\nUpload complete");
             return true;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -137,14 +138,10 @@ class ClientHandler implements Runnable {
                     }
                 } else if (inputLine.equals("List")) {
                     out.writeUTF(MathServer.getFiles());
-                } else if (inputLine.equals("Exit")) {
-                    out.writeUTF("Exit command");
-                    break;
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error handling client #" + clientSocket.getInetAddress().getHostAddress());
-            e.printStackTrace();
+            System.out.println("Client #" + clientSocket.getInetAddress().getHostAddress() + " disconnected");
         } finally {
             try {
                 clientSocket.close();
