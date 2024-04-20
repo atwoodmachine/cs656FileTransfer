@@ -1,8 +1,5 @@
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
 
 public class MathServer {
     /* Expected path of server's file directory */
@@ -13,7 +10,7 @@ public class MathServer {
         File[] files = dir.listFiles();
         String filesToString = "";
         for(int i = 0; i < files.length; i++ ){
-           filesToString += files[i].getName() + "\n";
+            filesToString += files[i].getName() + "\n";
         }
 
         return filesToString;
@@ -80,13 +77,37 @@ public class MathServer {
             throw new RuntimeException(e);
         }
     }
-
-    public static void main(String[] args) throws IOException {
-        /* any port from 1024-65535 can be used as the port number */
+    public static void main(String[] args) {
         int portNumber = 1025;
-        try (
-                ServerSocket serverSocket = new ServerSocket(portNumber);
+        try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
+            System.out.println("Server is listening on port " + portNumber);
+
+            while (true) {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected: " + clientSocket.getInetAddress().getHostName());
+
+                // Handle client request in a separate thread
+                Thread clientThread = new Thread(new ClientHandler(clientSocket));
+                clientThread.start();
+            }
+        } catch (IOException e) {
+            System.out.println("Exception caught when trying to listen on port " + portNumber);
+            System.out.println(e.getMessage());
+        }
+    }
+
+}
+
+class ClientHandler implements Runnable {
+    private Socket clientSocket;
+
+    public ClientHandler(Socket socket) {
+        this.clientSocket = socket;
+    }
+
+    @Override
+    public void run() {
+        try (
                 DataInputStream in = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
                 DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
         ) {
@@ -101,34 +122,35 @@ public class MathServer {
 
             String inputLine;
             while ((inputLine = in.readUTF()) != null) {
-                if(inputLine.startsWith("Download")){
-                    if(!fileExists(parseFileName(inputLine))){
+                if (inputLine.startsWith("Download")) {
+                    if (!MathServer.fileExists(MathServer.parseFileName(inputLine))) {
                         out.writeUTF("File not found");
-                    }
-                    else{
-                        String download = getFileContent(parseFileName(inputLine));
+                    } else {
+                        String download = MathServer.getFileContent(MathServer.parseFileName(inputLine));
                         out.writeUTF(download);
                     }
-                }
-                if(inputLine.startsWith("Upload")){
-                    if(uploadFile(inputLine)){
+                } else if (inputLine.startsWith("Upload")) {
+                    if (MathServer.uploadFile(inputLine)) {
                         out.writeUTF("Upload complete");
-                    }
-                    else{
+                    } else {
                         out.writeUTF("File already exists");
                     }
-                }
-                if(inputLine.equals("List")){
-                    out.writeUTF(getFiles());
-                }
-                if(inputLine.equals("Exit")){
+                } else if (inputLine.equals("List")) {
+                    out.writeUTF(MathServer.getFiles());
+                } else if (inputLine.equals("Exit")) {
                     out.writeUTF("Exit command");
+                    break;
                 }
             }
         } catch (IOException e) {
-            System.out.println("Exception caught when trying to listen on port "
-                    + portNumber + " or listening for a connection");
-            System.out.println(e.getMessage());
+            System.out.println("Error handling client #" + clientSocket.getInetAddress().getHostAddress());
+            e.printStackTrace();
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
