@@ -60,7 +60,7 @@ public class MathServer {
         //format of fileInfo: Upload FileNameLength@ FileName Filecontent
         int endFileLength = fileInfo.indexOf("@");
         int fileNameLength = Integer.parseInt(fileInfo.substring(7, endFileLength));
-        String fileName = fileInfo.substring(endFileLength + 1, endFileLength + 2 + fileNameLength);
+        String fileName = fileInfo.substring(endFileLength + 1, endFileLength + 1 + fileNameLength);
         String fileContent = fileInfo.substring(endFileLength + 2 + fileNameLength);
 
         if(fileExists(fileName)){
