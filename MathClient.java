@@ -4,6 +4,9 @@ import java.net.*;
 public class MathClient {
     public static String parseFileName(String input){
         String fileName = "";
+        if(input.length() <= 6){
+            return fileName;
+        }
         //download_
         if(input.substring(0, 1).equals("D")){
             fileName = input.substring(9);

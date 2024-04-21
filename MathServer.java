@@ -125,6 +125,10 @@ class ClientHandler implements Runnable {
             String inputLine;
             while ((inputLine = in.readUTF()) != null) {
                 if (inputLine.startsWith("Download")) {
+                    if(inputLine.length() <= 8){
+                        out.writeUTF("File not found");
+                        continue;
+                    }
                     if (!MathServer.fileExists(MathServer.parseFileName(inputLine))) {
                         out.writeUTF("File not found");
                     } else {
