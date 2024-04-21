@@ -91,7 +91,7 @@ public class MathClient {
                         int fileLength = parseFileName(userInput).length();
                         String fileName = parseFileName(userInput);
                         //format of send: Upload FileNameLength FileName FileContent
-                        String send = "Upload " + fileLength + " " + fileName + " " + getFileContent(fileName);
+                        String send = "Upload " + fileLength + "@" + fileName + " " + getFileContent(fileName);
                         out.writeUTF(send);
                         String serverResponse = in.readUTF();
                         if(serverResponse.equals("File already exists")) {

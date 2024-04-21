@@ -57,9 +57,10 @@ public class MathServer {
     }
 
     public static boolean uploadFile(String fileInfo){
-        //format of fileInfo: Upload FileNameLength FileName Filecontent
-        int fileNameLength = Integer.parseInt(fileInfo.substring(7,8));
-        String fileName = fileInfo.substring(9, 9 + fileNameLength);
+        //format of fileInfo: Upload FileNameLength@ FileName Filecontent
+        int endFileLength = fileInfo.indexOf("@");
+        int fileNameLength = Integer.parseInt(fileInfo.substring(7, endFileLength));
+        String fileName = fileInfo.substring(endFileLength + 1, endFileLength + 2 + fileNameLength);
         String fileContent = fileInfo.substring(10 + fileNameLength);
 
         if(fileExists(fileName)){
