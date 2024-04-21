@@ -61,7 +61,7 @@ public class MathServer {
         int endFileLength = fileInfo.indexOf("@");
         int fileNameLength = Integer.parseInt(fileInfo.substring(7, endFileLength));
         String fileName = fileInfo.substring(endFileLength + 1, endFileLength + 2 + fileNameLength);
-        String fileContent = fileInfo.substring(10 + fileNameLength);
+        String fileContent = fileInfo.substring(endFileLength + 2 + fileNameLength);
 
         if(fileExists(fileName)){
             return false;
